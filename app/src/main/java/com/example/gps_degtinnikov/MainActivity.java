@@ -1,14 +1,18 @@
 package com.example.gps_degtinnikov;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -18,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     int ACCESS_FINE_LOCATION;
     int ACCESS_COARSE_LOCATION;
     TextView result;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,19 +31,18 @@ public class MainActivity extends AppCompatActivity {
         result = findViewById(R.id.result);
         _LocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
     }
+
     LocationListener _LocationListener = new LocationListener() {
-            @Override
+        @Override
         public void onLocationChanged(@NonNull Location location) {
             if (location == null) return;
             else {
                 String message = "";
-                if(location.getProvider().equals(LocationManager.GPS_PROVIDER))
-                {
+                if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                     message += "\nМестоположение определено с помощью GPS: долгота -" +
                             location.getLatitude() + "широта -" + location.getLongitude();
                 }
-                if(location.getProvider().equals(LocationManager.NETWORK_PROVIDER))
-                {
+                if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
                     message += "\nМестоположение определено с помощью GPS: долгота -" +
                             location.getLatitude() + "широта -" + location.getLongitude();
                 }
@@ -46,4 +50,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public Boolean GetPermissionGPS() {
+      ACCESS_FINE_LOCATION = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+      ACCESS_COARSE_LOCATION = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+      return ACCESS_FINE_LOCATION == PackageManager.PERMISSION_GRANTED ||
+        ACCESS_COARSE_LOCATION == PackageManager.PERMISSION_GRANTED;
+    }
+    public void OnGetGPS(View view)
+    {
+        if(GetPermissionGPS() == false)
+        {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+        }
+    }
 }
