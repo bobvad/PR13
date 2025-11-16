@@ -13,15 +13,12 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
     LocationManager _LocationManager;
     int ACCESS_FINE_LOCATION;
     int ACCESS_COARSE_LOCATION;
-    TextView result;
+    public TextView result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,5 +60,25 @@ public class MainActivity extends AppCompatActivity {
         {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
+    }
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        if(GetPermissionGPS() == false)
+        {
+            return;
+        }
+        else
+        {
+            _LocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,10,_LocationListener);
+            _LocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000, 10, _LocationListener);
+        }
+    }
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        _LocationManager.removeUpdates(_LocationListener);
     }
 }
